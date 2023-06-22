@@ -70,7 +70,7 @@ const options = {
     }
 };
 
-const getDataFilm = async (param) => {
+const getDataMovies = async (param) => {
     return fetch(`${URL}${param}${param.includes('?') ? '&language=en-US' : '?language=en-US'}`, options)
         .then(res => {
             if (!res.ok) {
@@ -80,4 +80,4 @@ const getDataFilm = async (param) => {
         })
 };
 
-export default getDataFilm;
+export default getDataMovies;
