@@ -1,56 +1,50 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import getDataMovies from "../../ApiService/MoviesApi";
-import { Section } from "../MoveDetails/MoveDetails.styled";
-import { Container } from "../FilmLayout/FilmLayout.styled";
-import { Review, ReviewsList } from "./Reviews.styled";
-import { useFilm } from "../hooks/useContext";
-
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { getReviews } from 'services/api';
+import { Item, Wrapper, Section } from './Reviews.styled';
 
 const Reviews = () => {
-    const [state, setState] = useState([])
-    const [responseErr, setResponseErr] = useState('')
-    const { filmId } = useParams()
-    const { setIsloading } = useFilm()
+  const [reviews, setReviews] = useState([]);
+  const { movieId } = useParams();
+  const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        setIsloading(true)
-        getDataMovies(`movie/${filmId}/reviews`)
-            .then(({ results }) => {
-                console.log(review)
-                setState(results)
-            })
-            .catch(err => setResponseErr(err.toString()))
-            .finally(() => setIsloading(false))
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getReviews(movieId);
+        setReviews(data);
+      } catch (e) {
+        console.log(e, 'There has been a mistake');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [movieId]);
 
-    }, [])
-
-    const review =
-        <Section>
-            <Container>
-                <ReviewsList>
-                    {state.map((rev, i) => {
-                        return (
-                            <Review key={rev.id} index={i}>
-                                <h4>{rev.author}</h4>
-                                <p>{rev.content}</p>
-                            </Review>
-                        );
-                    })}
-                </ReviewsList>
-            </Container>
-        </Section>
-
-    const reviews = (
+  return (
+    <Section>
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
         <>
-            {state.length === 0 && <div>reviews not found</div>}
-            {responseErr && <div>{responseErr}</div>}
-            {state.length !== 0 && review}
-        </>);
-
-    return reviews;
+          {reviews.length > 0 &&
+            reviews.map(({ id, author, content }) => (
+              <Wrapper>
+                <Item key={id}>
+                  <p>
+                    <b>Author: {author}</b>
+                  </p>
+                  <p>"{content}"</p>
+                </Item>
+              </Wrapper>
+            ))}
+        </>
+      )}
+      {!reviews.length && <p>There are no reviews for this film yet.</p>}
+    </Section>
+  );
 };
 
 export default Reviews;
-
-

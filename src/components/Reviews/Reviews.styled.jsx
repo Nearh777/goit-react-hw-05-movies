@@ -1,11 +1,18 @@
-import styled from '@emotion/styled';
+import styled from 'styled-components';
 
-export const ReviewsList = styled.ul`
+export const Item = styled.li`
+  text-align: justify;
+  list-style: none;
+  :not(:last-child) {
+    margin-bottom: 15px;
+  }
+`;
 
+export const Wrapper = styled.div`
+  margin-top: 10px;
+  padding: 10px;
+`;
 
-`
-export const Review = styled.li`
-background-color: ${({ index }) => index % 2 === 0 ? "white" : "rgb(209, 207, 207)"};
-border-radius: 0.2rem;
-padding: 4px 8px;
-`
+export const Section = styled.section`
+  padding: 15px 10px;
+`;
